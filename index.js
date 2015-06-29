@@ -84,7 +84,12 @@ app.route("/admin").get(function(req,res,next){
       Resource.findOrCreate({where: {name: req.json.name}, defaults:req.json})
       .spread(function(resource,created){
         if(created){
-          res.redirect("/"+req.json.name);
+					if(req.json.url){
+						res.end("URL created at "+req.headers.host+'/'+req.json.name);
+          }
+          else{
+						res.redirect("/"+req.json.name);
+					}
         }
         else{
           res.status(422);
