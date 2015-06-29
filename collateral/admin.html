@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <script src="jquery.js"></script>
+    <script>
+      function generateName(element,humanReadable){
+        var path="/getText";
+        if(humanReadable){
+          path="/getPhrase";
+        }
+        $.get(path).done(function(data){
+          $(element).val(data);
+        },"text");
+      }
+      function customType(){
+        if($("#gistType").val()=="custom"){
+         $("#customTypeText").show();
+        }
+      }
+      function changedCustom(){
+        var val=$("#customTypeText").val();
+        console.log(val)
+        $("#customTypeOption").attr("value",val).html(val);
+      }
+      $(document).ready(function(){
+        $(".gist form").submit(function(){
+        });
+        $("#tabbar span").click(function(){
+          var type=$(this).attr("class");
+          $(".page").hide();
+          $("."+type).show();
+        })
+        $(".page.gist").show();
+      });
+    </script>
+    <style>
+      .name{
+        width:200px;
+      }
+      .gist textarea{
+        height:200px;
+        width:300px;
+      }
+      #url{
+        width:200px;
+      }
+      #customTypeText{
+        display:none;
+      }
+      .page{
+        display:none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Runcible 1.0</h1>
+    <div id="tabbar">
+      <span class="gist">New Gist</span>
+      <span class="url">New URL</span>
+      <span class="folder">New Folder</span>
+      <span class="delete">Delete URL</span>
+    </div>
+    <div class="page gist">
+      <form action="/admin" method="POST">
+        Name: <input type="text" class="name" id="gistName" name="name" placeholder="runcible" /> <a href="#" onClick="generateName('#gistName',true)">Generate Name</a>
+        <br />
+        Gist:
+        <br />
+        <textarea name="gist" placeholder="Blah blah blah"></textarea>
+        <br />
+        Type:
+        <select name="mimeType" id="gistType" onchange="customType();">
+          <option value="text/plain">Text</option>
+          <option value="text/html">HTML</option>
+          <option value="application/javascript">Javascript</option>
+          <option value="text/css">CSS</option>
+          <option value="custom" id="customTypeOption">Custom</option>
+        </select>
+        <input type="text" id="customTypeText" onchange="changedCustom()" placeholder="custom/mime-type" />
+        <br />
+        <br />
+        <input type="password" name="password" placeholder="password" />
+        <button type="submit">Submit</submit>
+      </form>
+    </div>
+    <div class="page url">
+      <form action="/admin" method="POST">
+        Name: <input type="text" class="name" id="urlName" name="name" placeholder="runcible" /> <a href="#" onClick="generateName('#urlName',true)">Generate Name</a>
+        <br />
+        URL:
+        <input type="url" id="url" name="url" />
+        <br />
+        <br />
+        <input type="password" name="password" placeholder="password" />
+        <button type="submit">Submit</submit>
+      </form>
+    </div>
+    <div class="page delete">
+      <form action="/admin" method="DELETE">
+        Endpoint: <input type="text" class="name" id="urlName" name="urlName" placeholder="DesperatelyJumpingJackalope" />
+        <br />
+        <input type="password" name="password" placeholder="password" />
+        <button type="submit">DELETE</submit>
+      </form>
+    </div>
+  </body>
+</html>
