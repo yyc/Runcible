@@ -1,4 +1,4 @@
 module.exports={
-  adminPassword:"mypasssword"
+  adminPassword:"weeattomatoes"
   
 }
