@@ -32,15 +32,20 @@ fs.readFile(__dirname+"/collateral/animals","utf8",function(err,data){
   }
 });
 
-var sequelize=new Sequelize("runcible","","",{
-  dialect: "postgres"
-  , host: "localhost"
-  , pool: {
-      max: 2
-    , min: 0
-    , idle: 10000
-  }
-});
+if(process.env.DATABASE_URL){
+  var sequelize=new Sequelize(process.env.DATABASE_URL);
+}
+else{
+  var sequelize=new Sequelize("runcible","","",{
+    dialect: "postgres"
+    , host: "localhost"
+    , pool: {
+        max: 2
+      , min: 0
+      , idle: 10000
+    }
+  });
+}
 
 var Resource = sequelize.define("resource",{
   name: {
