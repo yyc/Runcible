@@ -1,6 +1,5 @@
 var express=require("express");
 var sequelize=require("sequelize");
-var http=require("http");
 var qs=require("querystring");
 var fs=require("fs");
 var Sequelize = require("sequelize");
@@ -173,7 +172,6 @@ function checkAuth(req,res,next){
     res.end("Incorrect Password");
   }
 }
-var server=http.createServer(app);
-server.listen(process.env.port || 8080,function(){
+app.listen(process.env.PORT || 8080,function(){
   console.log("Listening on port",process.env.PORT || 8080);
 });
