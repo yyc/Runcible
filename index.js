@@ -66,6 +66,9 @@ var Resource = sequelize.define("resource",{
 });
 sequelize.sync();
   
+app.route("/").get(function(req,res,next){
+  res.redirect("/runcible");
+})
 app.route("/admin").get(function(req,res,next){
     res.sendFile(__dirname+"/collateral/admin.html");
   }).post(readPost).post(checkAuth).post(function(req,res,next){
@@ -77,6 +80,7 @@ app.route("/admin").get(function(req,res,next){
       password: 'asd' }  
     */
     if(req.json.name&&(req.json.gist||req.json.url)){
+      res.json.name=res.json.name.toLowerCase();
       Resource.findOrCreate({where: {name: req.json.name}, defaults:req.json})
       .spread(function(resource,created){
         if(created){
@@ -93,7 +97,48 @@ app.route("/admin").get(function(req,res,next){
       res.end("400 Bad Request");
     }
   });
-
+app.route("/admin/:password/:command").get(function(req,res,next){
+  if(req.params.password==configs.adminPassword){
+    switch(req.params.command){
+      case "flushdb":
+        sequelize.sync({force:true}).then(function(result){
+          console.log(result);
+          res.end("Database Flushed");
+        })
+      break;
+      case "list":
+        Resource.findAll().then(function(resources){
+          console.log(resources);
+          if(resources.length){
+            res.write("<table><tr><th>Name</th><th>Type</th>");
+            resources.forEach(function(resource){
+              res.write("<tr><td><a href='/"+resource.name+"'>"+resource.name+"</a></td><td>");
+              if(resource.url){
+                res.write("URL");
+              }
+              else{
+                res.write("Gist");
+              }
+              res.write("</td></tr>\n");
+            });
+            res.end("</table>");
+          }
+          else{
+            res.end("Empty");
+          }
+        });
+      break;
+      default :
+      
+      res.end();
+    }
+  }
+  else{
+    res.status(404);
+    res.type("html");
+    res.end("Cannot "+req.method+" "+req.path);
+  }
+})
 
 
 app.route("/jquery.js").get(function(req,res,next){
@@ -101,9 +146,10 @@ app.route("/jquery.js").get(function(req,res,next){
 });
 app.route("/getPhrase").get(genPhrase);
 app.route("/:name").all(function(req,res,next){
-  Resource.findOne({where : {name : req.params.name}}).then(function(resource){
+  Resource.findOne({where : {name : req.params.name.toLowerCase()}}).then(function(resource){
     if(resource==null){
       res.status(404);
+      res.type("html");
       res.end("Resource not Found");
     }
     else{
