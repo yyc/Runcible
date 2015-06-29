@@ -170,5 +170,5 @@ function checkAuth(req,res,next){
 }
 var server=http.createServer(app);
 server.listen(process.env.port || 8080,function(){
-  console.log("Listening on port",process.env.port || 8080);
+  console.log("Listening on port",process.env.PORT || 8080);
 });
