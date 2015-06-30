@@ -69,9 +69,7 @@ sequelize.sync();
 app.route("/").get(function(req,res,next){
   res.redirect("/runcible");
 })
-app.route("/admin").get(function(req,res,next){
-    res.sendFile(__dirname+"/collateral/admin.html");
-  }).post(readPost).post(checkAuth).post(function(req,res,next){
+app.route("/admin").post(readPost).post(checkAuth).post(function(req,res,next){
     /*
       req.json
     { name: 'asd',
@@ -102,6 +100,9 @@ app.route("/admin").get(function(req,res,next){
       res.end("400 Bad Request");
     }
   });
+app.route("/admin/new").get(function(req,res,next){
+    res.sendFile(__dirname+"/collateral/admin.html");
+  })
 app.route("/admin/:password/:command").get(function(req,res,next){
   if(req.params.password==configs.adminPassword){
     switch(req.params.command){
@@ -151,7 +152,7 @@ app.route("/jquery.js").get(function(req,res,next){
 });
 app.route("/getPhrase").get(genPhrase);
 app.route("/:name").all(function(req,res,next){
-  Resource.findOne({where : {name : req.params.name.toLowerCase()}}).then(function(resource){
+  Resource.findOne({where : {name : {$iLike:req.params.name}}}).then(function(resource){
     if(resource==null){
       res.status(404);
       res.type("html");
