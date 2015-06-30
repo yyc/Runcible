@@ -3,6 +3,7 @@ var sequelize=require("sequelize");
 var qs=require("querystring");
 var fs=require("fs");
 var Sequelize = require("sequelize");
+var cors=require("cors");
 
 var configs=require("./config.js");
 var app=express();
@@ -30,6 +31,10 @@ fs.readFile(__dirname+"/collateral/animals","utf8",function(err,data){
     });
   }
 });
+
+app.use(cors({
+  origin: false
+}))
 
 if(process.env.DATABASE_URL){
   var sequelize=new Sequelize(process.env.DATABASE_URL);
