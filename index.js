@@ -33,7 +33,7 @@ fs.readFile(__dirname+"/collateral/animals","utf8",function(err,data){
 });
 
 app.use(cors({
-  origin: false
+  origin: "*"
 }))
 
 if(process.env.DATABASE_URL){
