@@ -3,11 +3,15 @@ var sequelize=require("sequelize");
 var qs=require("querystring");
 var fs=require("fs");
 var Sequelize = require("sequelize");
+var jade=require("jade");
 
 var configs=require("./config.js");
 var app=express();
 var animals;
 var adjectives;
+
+//setup functions
+//reading wordlist
 fs.readFile(__dirname+"/collateral/adjectives","utf8",function(err,data){
   if(err){
     console.log(err);
@@ -30,7 +34,7 @@ fs.readFile(__dirname+"/collateral/animals","utf8",function(err,data){
     });
   }
 });
-
+//Database setup
 if(process.env.DATABASE_URL){
   var sequelize=new Sequelize(process.env.DATABASE_URL);
 }
@@ -45,7 +49,7 @@ else{
     }
   });
 }
-
+//Models
 var Resource = sequelize.define("resource",{
   name: {
     type: Sequelize.STRING
@@ -65,10 +69,12 @@ var Resource = sequelize.define("resource",{
   }
 });
 sequelize.sync();
-  
+
+//var adminPage=jade.compileFile(__dirname+"/collateral/admin.jade");
+
 app.route("/").get(function(req,res,next){
   res.redirect("/runcible");
-})
+});
 app.route("/admin").post(readPost).post(checkAuth).post(function(req,res,next){
     /*
       req.json
@@ -101,7 +107,8 @@ app.route("/admin").post(readPost).post(checkAuth).post(function(req,res,next){
     }
   });
 app.route("/admin/new").get(function(req,res,next){
-    res.sendFile(__dirname+"/collateral/admin.html");
+    var adminPage=jade.compileFile(__dirname+"/collateral/admin.jade");
+    res.end(adminPage());
   })
 app.route("/admin/:password/:command").get(function(req,res,next){
   if(req.params.password==configs.adminPassword){

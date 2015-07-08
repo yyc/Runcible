@@ -1,0 +1,113 @@
+doctype html
+html
+  head
+    title Runcible v0.1
+    script(src="/jquery.js")
+    script(type="text/javascript").
+      function generateName(element,humanReadable){
+        var path="/getText";
+        if(humanReadable){
+          path="/getPhrase";
+        }
+        $.get(path).done(function(data){
+          $(element).val(data);
+        },"text");
+      }
+      function customType(){
+        if($("#gistType").val()=="custom"){
+         $("#customTypeText").show();
+        }
+      }
+      function changedCustom(){
+        var val=$("#customTypeText").val();
+        console.log(val)
+        $("#customTypeOption").attr("value",val).html(val);
+      }
+      $(document).ready(function(){
+        $(".gist form").submit(function(){
+        });
+        $("#tabbar span").click(function(){
+          var type=$(this).attr("class");
+          $(".page").hide();
+          $("."+type).show();
+        })
+        $(".page.gist").show();
+        $(".delete form").submit(function(e){
+          e.preventDefault();
+          $.ajax("/"+$(".delete .name").val(),{
+            data:{password:$(".delete .password")},
+            type:"post",
+            success:function(data){
+              alert(data);
+              console.log(data);
+            }});
+          return false;
+        })
+      });
+    style(type="text/css").
+      .name{
+        width:200px;
+      }
+      .gist textarea{
+        height:200px;
+        width:300px;
+      }
+      #url{
+        width:200px;
+      }
+      #customTypeText{
+        display:none;
+      }
+      .page{
+        display:none;
+      }
+      #tabbar span{
+        border-left: 1px black solid;
+        border-top: 1px black solid;
+        border-right: 1px black solid;
+        border-radius: 6px 6px 0px 0px
+      }
+      #tabbar{
+        border-bottom: 2px gray solid;
+        margin-bottom: 3px;
+      }
+  body
+    h1 Runcible v0.1
+    #tabbar
+      span.gist New Gist
+      span.url New URL
+      span.folder New Folder
+      span.delete Delete URL
+    .page.gist
+      form(action="/admin/new",method="POST")
+        |Name:
+        input.name(type="text",name="name",placeholder="runcible")
+        a(href="#",onclick="generateName('.gist .name',true)") Generate Name
+        br
+        |Gist:
+        br
+        textarea(name="gist",placeholder="blah blah blah")
+        br
+        |Type:
+        select(name="mimeType",onchange="customType()")
+          option(value="text/plain") Text
+          option(value="text/html") HTML
+          option(value="application/javascript") Javascript
+          option(value="text/css") CSS
+          option#customTypeOption(value="custom") Custom
+        input#customTypeText(type="text",onchange="changedCustom()",placeholder="custom/mime-type")
+        br
+        button(type="submit") Submit
+    .page.url
+      form(action="/admin/new",method="POST")
+        |Name:
+        input.name(type="text",name="name",placeholder="runcible")
+        a(href="#",onclick="generateName('.url .name',true)") Generate Name
+        br
+        |URL:
+        input#url(type="url",name="url")
+        br
+        button(type="submit") Submit
+    .page.folder
+    
+    .page.list
