@@ -151,7 +151,7 @@ app.route("/jquery.js").get(function(req,res,next){
   res.sendFile(__dirname+"/collateral/jquery-2.1.4.min.js");
 });
 app.route("/getPhrase").get(genPhrase);
-app.route("/:name").all(function(req,res,next){
+app.route("/:name").get(function(req,res,next){
   Resource.findOne({where : {name : {$iLike:req.params.name}}}).then(function(resource){
     if(resource==null){
       res.status(404);
@@ -175,8 +175,11 @@ app.route("/:name").all(function(req,res,next){
   },function(error){
     res.status(500);
     res.end("500 Internal Server Error");
-  })
+  });
+}).all(function(req,res,next){
+  req.end();
 });
+
 
 app.route("/:project/:keyword").all(function(req,res,next){
   

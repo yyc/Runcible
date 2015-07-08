@@ -30,6 +30,17 @@
           $("."+type).show();
         })
         $(".page.gist").show();
+        $(".delete form").submit(function(e){
+          e.preventDefault();
+          $.ajax("/"+$(".delete .name").val(),{
+            data:{password:$(".delete .password")},
+            type:"post",
+            success:function(data){
+              alert(data);
+              console.log(data);
+            }});
+          return false;
+        })
       });
     </script>
     <style>
@@ -105,10 +116,10 @@
       </form>
     </div>
     <div class="page delete">
-      <form action="/admin" method="DELETE">
-        Endpoint: <input type="text" class="name" id="urlName" name="urlName" placeholder="DesperatelyJumpingJackalope" />
+      <form action="/admin" method="post">
+        Endpoint: <input type="text" class="name" name="urlName" placeholder="DesperatelyJumpingJackalope" />
         <br />
-        <input type="password" name="password" placeholder="password" />
+        <input type="password" class="password" name="password" placeholder="password" />
         <button type="submit">DELETE</submit>
       </form>
     </div>
